@@ -35,7 +35,3 @@ The plugin provides:
   - PyMOL structures
   - Bar plot
 - Selected cluster is highlighted automatically
-
-## 🚀 Installation
-
-1. Copy the file:
