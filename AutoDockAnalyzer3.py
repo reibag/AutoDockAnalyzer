@@ -12,17 +12,17 @@
 """
 DESCRIPTION:
     Interactive PyMOL 3.X plugin partitioned into multi-tabs for processing both
-    AutoDock Classic (.dlg) and AutoDock Vina multi-state outputs.
+    AutoDock Classic (.dlg) and AutoDock Vina (.pdbqt) multi-state outputs.
 
 FEATURES:
     - Tab 1 (AutoDock Classic): Greedy clustering, medoid generation, statistical calculations (Kd, pKd),
       population plotting, and standalone CSV reporting.
     - Tab 2 (AutoDock Vina): Direct parsing of Vina multi-model states, affinity
       mapping tables, thermodynamic profiling, and standalone Vina CSV reporting.
-    - Tab 3 (Acknowledgements): Institutional credits.
+    - Tab 3 (About): Institutional credits.
 VERSION HISTORY:
     v3.1 (2026-07-02): 
-        - Fixed a critical UI freezing issue and CPU overhead caused by blocking 'plt.show()' calls in Matplotlib.
+        - Fixed a critical GUI freezing issue and CPU overhead caused by blocking 'plt.show()' calls in Matplotlib.
         - Resolved plugin startup crashes by implementing lazy loading for 'matplotlib'.
     v3.0 (2026-06-29):
         - Initial implementation of VINA poses loading and basic PyMOL integration.
@@ -394,7 +394,7 @@ class GUI(QtWidgets.QWidget):
 
         self.vina_file_line = QtWidgets.QLineEdit()
         browse_btn = QtWidgets.QPushButton("Browse Vina Output (.pdbqt / .pdb)")
-        load_btn = QtWidgets.QPushButton("Load Poses & Compute Thermodynamics")
+        load_btn = QtWidgets.QPushButton("Load Poses & Thermodynamics")
         
         # FIXED: Added Vina CSV Export button
         vina_export_btn = QtWidgets.QPushButton("Export Vina CSV Report")
@@ -565,6 +565,6 @@ def run_plugin():
 
 def __init_plugin__(app=None):
     from pymol.plugins import addmenuitemqt
-    addmenuitemqt("AutoDockAnalyzer 3", run_plugin)
+    addmenuitemqt("ADA 3", run_plugin)
 
-cmd.extend("AutoDockAnalyzer 3", run_plugin)
+cmd.extend("ADA 3", run_plugin)
