@@ -1,6 +1,6 @@
 # AutoDockAnalyzer
 
-Interactive PyMOL 3.X plugin for the analysis of AutoDock4 and Vina docking results.
+Interactive PyMOL 3.X plugin for the analysis of AutoDock4 and AutoDock Vina docking results.
 
 ## 🧪 Description
 
