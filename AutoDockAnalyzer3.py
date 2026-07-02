@@ -385,7 +385,7 @@ class GUI(QtWidgets.QWidget):
         layout.addWidget(self.table_widget)
         
         tab.setLayout(layout)
-        self.tabs.addTab(tab, "AutoDock4 (.dlg)")
+        self.tabs.addTab(tab, "AutoDock4")
 
     def init_vina_tab(self):
         """Tab 2: AutoDock Vina Layout."""
