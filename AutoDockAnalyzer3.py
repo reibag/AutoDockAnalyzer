@@ -345,7 +345,7 @@ class GUI(QtWidgets.QWidget):
         layout = QtWidgets.QVBoxLayout()
 
         self.file = QtWidgets.QLineEdit()
-        browse = QtWidgets.QPushButton("Browse .DLG")
+        browse = QtWidgets.QPushButton("Browse .dlg")
         cutoff_label = QtWidgets.QLabel("RMSD cutoff (Å)")
         self.cutoff = QtWidgets.QLineEdit("2.0")
         load_btn = QtWidgets.QPushButton("Load DLG")
@@ -385,7 +385,7 @@ class GUI(QtWidgets.QWidget):
         layout.addWidget(self.table_widget)
         
         tab.setLayout(layout)
-        self.tabs.addTab(tab, "AutoDock4 (.DLG)")
+        self.tabs.addTab(tab, "AutoDock4 (.dlg)")
 
     def init_vina_tab(self):
         """Tab 2: AutoDock Vina Layout."""
