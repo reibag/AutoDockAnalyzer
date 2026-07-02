@@ -345,10 +345,10 @@ class GUI(QtWidgets.QWidget):
         layout = QtWidgets.QVBoxLayout()
 
         self.file = QtWidgets.QLineEdit()
-        browse = QtWidgets.QPushButton("Browse .dlg")
+        browse = QtWidgets.QPushButton("Browse AutoDock Output (.dlg)")
         cutoff_label = QtWidgets.QLabel("RMSD cutoff (Å)")
         self.cutoff = QtWidgets.QLineEdit("2.0")
-        load_btn = QtWidgets.QPushButton("Load DLG")
+        load_btn = QtWidgets.QPushButton("Load Poses")
         cluster_btn = QtWidgets.QPushButton("Run Clustering")
         best_btn = QtWidgets.QPushButton("Extract Best Poses")
         medoid_btn = QtWidgets.QPushButton("Extract Centroids (Medoids)")
@@ -359,7 +359,7 @@ class GUI(QtWidgets.QWidget):
             plot_btn.setToolTip("Plotting requires the 'matplotlib' library to be installed in Python.")
         
         # FIXED: Re-added Classic CSV Export button
-        export_btn = QtWidgets.QPushButton("Export CSV Report")
+        export_btn = QtWidgets.QPushButton("Export AutoDock CSV Report")
         self.table_widget = QtWidgets.QTableWidget()
 
         # Connections
@@ -394,7 +394,7 @@ class GUI(QtWidgets.QWidget):
 
         self.vina_file_line = QtWidgets.QLineEdit()
         browse_btn = QtWidgets.QPushButton("Browse Vina Output (.pdbqt / .pdb)")
-        load_btn = QtWidgets.QPushButton("Load Poses & Thermodynamics")
+        load_btn = QtWidgets.QPushButton("Load Poses")
         
         # FIXED: Added Vina CSV Export button
         vina_export_btn = QtWidgets.QPushButton("Export Vina CSV Report")
