@@ -567,4 +567,4 @@ def __init_plugin__(app=None):
     from pymol.plugins import addmenuitemqt
     addmenuitemqt("ADA 3", run_plugin)
 
-cmd.extend("ADA 3", run_plugin)
+cmd.extend("AutoDockAnalyzer 3", run_plugin)
