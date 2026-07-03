@@ -614,3 +614,4 @@ def __init_plugin__(app=None):
     addmenuitemqt("ADA", run_plugin)
 
 cmd.extend("AutoDockAnalyzer", run_plugin)
+print(f"✅ AutoDockAnalyzer v{version} LOADED")
