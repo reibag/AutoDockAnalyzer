@@ -29,6 +29,9 @@ The plugin provides:
 | Cluster | Size | Energy | Kd | pKd | Mean | SD |
 |--------|------|--------|----|-----|------|-----|
 
+## Installing the plugin
+🖥️ Download the repo and extract the files. Then, in PyMOL click on Plugin -> Plugin Manager -> Install New Plugin -> Install from local file (Choose File ...) and select the init.py file in the plugin folder. You can access the plugin from the Plugin tab in PyMOL.
+
 ## 📄 How to cite
 Garcia-Marin, J., AutoDockAnalyzer, 2026, https://github.com/reibag/AutoDockAnalyzer/
 
