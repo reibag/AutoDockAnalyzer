@@ -22,14 +22,14 @@ FEATURES:
     - Cluster population bar plotting with matplotlib.
 
 VERSION HISTORY:
-    v2.6 (2026-07-01):
+    v0.6 (2026-07-01):
         - Added: Native numeric sorting for table columns (Size, Energy, Kd, Mean).
         - Fixed: Prevented string-sorting issues (e.g., '10' coming before '2').
-    v2.5 (2026-07-01):
+    v0.5 (2026-07-01):
         - Removed: 'Create Cluster States' button; creation is now fully automated.
         - Changed: Cluster object names now dynamically include the RMSD cutoff value.
         - Added: Single-click isolation on table rows to toggle visibility in PyMOL.
-    v2.5 (2026-06-28):
+    v0.5 (2026-06-28):
         - Removed: 'Create Cluster States' button; creation is now fully automated.
         - Changed: Cluster object names now dynamically include the RMSD cutoff value.
         - Added: Single-click isolation on table rows to toggle visibility in PyMOL.
@@ -462,4 +462,4 @@ def __init_plugin__(app=None):
     addmenuitemqt("AutoDockAnalyzer", run_plugin)
 
 cmd.extend("AutoDockAnalyzer", run_plugin)
-print("✅ AutoDockAnalyzer v2.6 LOADED (Strict layout constraints fixed)")
+print("✅ AutoDockAnalyzer v0.6 LOADED (Strict layout constraints fixed)")
