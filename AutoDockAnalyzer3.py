@@ -6,7 +6,7 @@
 # VERSION: 3.2
 # DATE: 2026-07-03
 # AUTHOR: Javier García Marín (assisted by M365 Copilot & Gemini Flash)
-# AFFILIATION: University of Alcalá (Department of Pharmaceutical Chemistry)
+# AFFILIATION: University of Alcalá (Department of Organic and Inorganic Chemistry)
 # LICENSE: MIT License
 # ==============================================================================
 """
