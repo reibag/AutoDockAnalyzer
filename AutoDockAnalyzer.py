@@ -469,7 +469,7 @@ class GUI(QtWidgets.QWidget):
             "<i>Department of Organic and Inorganic Chemistry</i><br>"
             "<b>University of Alcalá</b><br>"
             "<a href='mailto:javier.garciamarin@uah.es'>javier.garciamarin@uah.es</a><br><br>"
-            "<font color='#880088'><b>License: MIT</b></font><br>"
+            "<font color='#880088'><b>License: GPLv3</b></font><br>"
             #"Academic & non-commercial use only."
             "</p>"
         )
