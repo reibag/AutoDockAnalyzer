@@ -5,7 +5,7 @@
 # PLUGIN: AutoDockAnalyzer (ADA)
 # VERSION: 1.2
 # DATE: 2026-07-03
-# AUTHOR: Javier García Marín
+# AUTHOR: Javier García Marín (assisted with Copilot 365)
 # AFFILIATION: University of Alcalá (Department of Organic and Inorganic Chemistry)
 # LICENSE: GNU GENERAL PUBLIC LICENSE (GPLv3)
 # ==============================================================================
