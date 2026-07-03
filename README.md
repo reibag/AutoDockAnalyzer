@@ -1,10 +1,10 @@
-# AutoDockAnalyzer
+# AutoDockAnalyzer (ADA 3)
 
 Interactive PyMOL 3.X plugin for the analysis of AutoDock4 and AutoDock Vina docking results.
 
 ## 🧪 Description
 
-AutoDockAnalyzer is a light and portable plugin for PyMOL designed to analyze docking results from AutoDock (.dlg) and AutoDock Vina (.pdbqt). It provides AutoDock-like clustering, thermodynamic data, and visualization tools comparable to AutoDockTools, with extended interactive capabilities.
+AutoDockAnalyzer 3 is a light and portable plugin for PyMOL designed to analyze docking results from AutoDock (.dlg) and AutoDock Vina (.pdbqt). It provides AutoDock-like clustering, thermodynamic data, and visualization tools comparable to AutoDockTools, with extended interactive capabilities.
 
 ## ✨ Features
 
