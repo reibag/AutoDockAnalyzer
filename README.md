@@ -1,4 +1,4 @@
-# AutoDockAnalyzer (ADA 3)
+# AutoDockAnalyzer (ADA)
 
 Interactive PyMOL 3.X plugin for the analysis of AutoDock4 and AutoDock Vina docking results.
 
