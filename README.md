@@ -29,3 +29,6 @@ The plugin provides:
 | Cluster | Size | Energy | Kd | pKd | Mean | SD |
 |--------|------|--------|----|-----|------|-----|
 
+## 📄 How to cite
+Garcia-Marin, J., AutoDockAnalyzer, 2026, https://github.com/reibag/AutoDockAnalyzer/
+
