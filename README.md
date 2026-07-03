@@ -4,13 +4,12 @@ Interactive PyMOL 3.X plugin for the analysis of AutoDock4 and AutoDock Vina doc
 
 ## 🧪 Description
 
-AutoDockAnalyzer is a Python plugin for PyMOL designed to analyze docking results from AutoDock (.dlg files) and AutoDock Vina (.pdbqt). It provides clustering, thermodynamic interpretation, and visualization tools comparable to AutoDockTools, with extended interactive capabilities.
+AutoDockAnalyzer is a Python plugin for PyMOL designed to analyze docking results from AutoDock (.dlg) and AutoDock Vina (.pdbqt). It provides AutoDock-like clustering, thermodynamic data, and visualization tools comparable to AutoDockTools, with extended interactive capabilities.
 
 ## ✨ Features
 
-- AutoDock-like clustering based on RMSD and energy
+- AutoDock-like clustering based on RMSD
 - Interactive table (click to visualize clusters)
-- Automatic cluster coloring (consistent with plots)
 - Extraction of:
   - Best pose
   - Medoid (representative structure)
@@ -30,9 +29,3 @@ The plugin provides:
 | Cluster | Size | Energy | Kd | pKd | Mean |
 |--------|------|--------|----|-----|------|
 
-## 🎨 Visualization
-
-- Each cluster has a consistent color in:
-  - PyMOL structures
-  - Bar plot
-- Selected cluster is highlighted automatically
