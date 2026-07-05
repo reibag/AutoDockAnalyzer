@@ -15,22 +15,25 @@ DESCRIPTION:
     AutoDock Classic (.dlg) and AutoDock Vina multi-state (.pdbqt) outputs.
 
 FEATURES:
-    - Tab 1 (AutoDock4): Geometric greedy clustering, medoid extraction, thermodynamic 
+    - Tab 1 (AutoDock): Geometric greedy clustering, medoid extraction, thermodynamic 
       calculations (Kd, pKd), population charting with energy SD, and standalone CSV reports.
     - Tab 2 (AutoDock Vina): Parsing of Vina multi-model states, affinity mapping tables, 
       thermodynamic profiling, and native Vina CSV reporting.
     - Tab 3 (About): Institutional credits and non-commercial licensing information.
 VERSION HISTORY:
-    v1.3 (2026-07-04):
+    v1.3 (2026-07-02):
         - Added H-Bonds button
-    v1.2 (2026-07-03):
+    v1.2 (2026-06-10):
         - Corrected critical bugs 
-    v1.1 (2026-07-02):
+    v0.1 (2026-05-01):
         - Added intracluster Energy SD 
         - Fixed a critical UI freezing issue and CPU overhead caused by blocking 'plt.show()' calls in Matplotlib.
         - Resolved plugin startup crashes by implementing lazy loading for 'matplotlib'.
-    v1.0 (2026-06-29):
-        - Initial implementation of VINA poses loading and basic PyMOL integration.
+    v0.7 (2026-03-17):
+        - GUI implementation
+        - Bugs correction
+    v0.5 (2026-01-29):
+        - Initial implementation of AutoDock and VINA poses loading and basic PyMOL integration.
 """
 import numpy as np
 import os
@@ -62,19 +65,28 @@ PERSONAL_LOGO_BASE64 = b"""iVBORw0KGgoAAAANSUhEUgAAAKUAAAClCAYAAAA9Kz3aAAAAAXNSR
 ###############
 
 def calculate_hydrogen_bonds(selection1, selection2):
-    """Calcula y muestra enlaces de hidrógeno entre ligando y proteína."""
+    """
+    Calculates and displays polar hydrogen bond networks between two PyMOL selections 
+    (typically the target protein and loaded ligand poses) using atom-distance criteria.
+    """
     result_name = "hbonds_view"
     cmd.delete(result_name)
+    # Filter selections to check distances exclusively among potential donor and acceptor atoms
     all_don_acc1 = f"{selection1} and (donor or acceptor)"
     all_don_acc2 = f"{selection2} and (donor or acceptor)"
     
+    # Render dashed distance lines between selections using a threshold of 3.6 Angstroms
     cmd.distance(result_name, all_don_acc1, all_don_acc2, 3.6, mode=2)
     cmd.set("dash_radius", "0.1", result_name)
     cmd.set("dash_color", "yellow", result_name)
-    print(f"[ADA] H-Bonds found tetween {selection1} y {selection2}")
+    print(f"[ADA] H-Bonds found between {selection1} y {selection2}")
+
 
 class NumericTableWidgetItem(QtWidgets.QTableWidgetItem):
-    """Custom table widget item that allows proper numerical sorting."""
+    """
+    Custom QTableWidgetItem subclass designed to override native text-string sorting, 
+    ensuring mathematical numerical sorting within the PyQt graphical table grids.
+    """
     def __init__(self, value):
         super().__init__()
         if value is None or value == "" or value == "Inf" or value == "-Inf":
@@ -90,15 +102,21 @@ class NumericTableWidgetItem(QtWidgets.QTableWidgetItem):
 
 
 class ADA:
-    """Core logic controller for processing AutoDock results."""
+    """
+    Core engine controller that handles data ingestion, text parsing, RMSD-based 
+    greedy clustering, and thermodynamic property curation for AutoDock4 (.dlg) files.
+    """
     def __init__(self):
-        self.poses = []
-        self.energies = []
-        self.clusters = []
+        self.poses = []         # Stores lists of raw PDB-formatted atom rows for each pose
+        self.energies = []      # Stores parsed binding free energy values (kcal/mol)
+        self.clusters = []      # Nested list housing index pointers for grouped spatial families
         self.current_cutoff = 2.0
 
     def apply_visual_style(self, obj):
-        """Optimizes representation styling and applies a strict state limit frame."""
+        """
+        Applies a standardized, clean visual styling preset (sticks representation, 
+        hiding spheres) and isolates states inside the active PyMOL viewport.
+        """
         cmd.hide("everything", obj)
         cmd.show("sticks", obj)
         cmd.hide("spheres", obj)
@@ -107,6 +125,10 @@ class ADA:
         cmd.set("all_states", 0, obj)
 
     def load_dlg(self, filename):
+        """
+        Parses raw text rows from native AutoDock4 docking log files (.dlg), extracting 
+        structural coordinate matrices and corresponding estimated free energies of binding.
+        """
         if not os.path.exists(filename):
             print("[ADA3] Error: File not found")
             return False
@@ -119,12 +141,14 @@ class ADA:
 
         with open(filename, "r") as f:
             for line in f:
+                # Extract binding free energies from matching text flags
                 if "Estimated Free Energy of Binding" in line:
                     try:
                         energy = float(line.split("=")[1].split()[0])
                     except Exception:
                         energy = None
 
+                # Isolate multi-state atom models bounded by model initialization markers
                 if line.startswith("DOCKED: MODEL"):
                     pose = []
                     reading = True
@@ -139,17 +163,25 @@ class ADA:
         return True
 
     def load_into_pymol(self):
+        """
+        Loads extracted coordinate arrays directly into the PyMOL session workspace. 
+        Suspends workspace UI refreshes during the loop to enhance execution performance.
+        """
         if not self.poses: return
         obj = "lig_all"
         cmd.delete(obj)
         
-        cmd.set("suspend_updates", 1)
+        cmd.set("suspend_updates", 1) # Prevents interface stutter during parsing loops
         for i, pose in enumerate(self.poses):
             cmd.read_pdbstr("".join(pose), obj, state=i+1)
         self.apply_visual_style(obj)
-        cmd.set("suspend_updates", 0)
+        cmd.set("suspend_updates", 0) # Restore visualization rendering updates
 
     def coords(self, pose):
+        """
+        Slices and extracts cartesian coordinate space metrics (X, Y, Z coordinates) 
+        from raw PDB text lines, returning a structured numerical NumPy array.
+        """
         coordinates = []
         for line in pose:
             try:
@@ -158,6 +190,7 @@ class ADA:
                 z = float(line[46:54].strip())
                 coordinates.append([x, y, z])
             except ValueError:
+                # Fallback handler for non-standard column spacing variations
                 parts = line.split()
                 if len(parts) >= 8:
                     try:
@@ -167,12 +200,21 @@ class ADA:
         return np.array(coordinates)
 
     def rmsd(self, a, b):
+        """
+        Calculates the standard root-mean-square deviation (RMSD) between two 
+        spatial coordinate matrices utilizing basic vector geometry calculations.
+        """
         if len(a) != len(b) or len(a) == 0: return 999.0
         return np.sqrt(((a - b) ** 2).sum() / len(a))
 
     def cluster(self, cutoff=2.0):
+        """
+        Executes a sorting-driven greedy structural clustering algorithm. Poses are 
+        ordered by binding energy scores and grouped using a user-defined RMSD cutoff.
+        """
         if not self.poses: return
         self.current_cutoff = cutoff
+        # Sort indices based on affinity score rankings to establish lowest energy seeds
         order = sorted(range(len(self.poses)), key=lambda i: self.energies[i] if self.energies[i] is not None else 999)
         assigned = [False] * len(self.poses)
         clusters = []
@@ -193,7 +235,11 @@ class ADA:
         self.create_clusters()
 
     def table(self):
-        R, T = 0.001987, 298.15
+        """
+        Compiles spatial metrics and calculates missing thermodynamic constants, converting 
+        binding scores (kcal/mol) into dissociation constants (Kd) and pKd at 298.15 Kelvin.
+        """
+        R, T = 0.001987, 298.15 # Ideal gas constant and standardized room temperature
         data = []
         for i, c in enumerate(self.clusters):
             energies = [self.energies[j] for j in c if self.energies[j] is not None]
@@ -214,6 +260,10 @@ class ADA:
         return data
 
     def create_clusters(self):
+        """
+        Generates distinct multi-state PyMOL group objects for isolated cluster sets, 
+        naming objects to reflect the explicit RMSD cutoffs used during execution.
+        """
         cmd.set("suspend_updates", 1)
         cutoff_str = str(self.current_cutoff).replace('.', '_')
         for i, c in enumerate(self.clusters):
@@ -225,6 +275,7 @@ class ADA:
         cmd.set("suspend_updates", 0)
 
     def best(self):
+        """Extracts and displays the absolute lowest-energy structural model for each cluster."""
         for i, c in enumerate(self.clusters):
             idx = min(c, key=lambda x: self.energies[x] if self.energies[x] is not None else 999)
             name = f"best_{i+1}"
@@ -233,6 +284,10 @@ class ADA:
             self.apply_visual_style(name)
 
     def medoid(self):
+        """
+        Identifies and extracts the true geometric medoid centroid for each spatial cluster family 
+        by calculating the model displaying the lowest average distance variance to all peer poses.
+        """
         for i, c in enumerate(self.clusters):
             best_idx, best_score = None, float("inf")
             for idx_i in c:
@@ -244,10 +299,14 @@ class ADA:
             if best_idx is not None:
                 name = f"medoid_{i+1}"
                 cmd.delete(name)
-                cmd.read_pdbstr("".join(self.poses[best_idx]), name)
+                cmd.read_pdbstr("".join(self.best_idx), name)
                 self.apply_visual_style(name)
 
     def plot(self):
+        """
+        Asynchronously generates high-resolution bar charts plotting cluster populations with energy standard 
+        deviations acting as vertical error bars. Automatically falls back if matplotlib is missing.
+        """
         table = self.table()
         if not table: 
             return
@@ -257,7 +316,7 @@ class ADA:
             return
 
         import matplotlib
-        matplotlib.use('Agg', force=True) 
+        matplotlib.use('Agg', force=True) # Forces a headless background script renderer, avoiding canvas freezes
         import matplotlib.pyplot as plt
         
         cluster_ids = [row[0] for row in table]
@@ -291,6 +350,7 @@ class ADA:
         fig.savefig(output_path, dpi=150)
         plt.close(fig)  
         
+        # Dispatch image rendering tasks to native operating system background processes
         import platform
         import subprocess
         if platform.system() == "Windows":
@@ -301,6 +361,7 @@ class ADA:
             subprocess.Popen(["xdg-open", output_path])
 
     def export_csv(self, filename):
+        """Exports all processed thermodynamic datasets and calculations into structured spreadsheet CSV reports."""
         with open(filename, "w", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["Cluster", "Size", "Best Energy", "Kd (M)", "pKd", "Mean Energy", "Energy SD"])
@@ -312,14 +373,18 @@ class ADA:
 
 
 class VinaAnalyzer:
-    """Module dedicated to parsing and exporting AutoDock Vina data files."""
+    """
+    Dedicated parser module engineered to isolate multi-model configurations and 
+    extract REMARK score metadata lines generated by AutoDock Vina execution runs.
+    """
     def __init__(self):
         self.models = []
         self.affinities = []
-        self.rmsd_lb = []  
-        self.rmsd_ub = []  
+        self.rmsd_lb = []  # Root-mean-square deviation lower bounds
+        self.rmsd_ub = []  # Root-mean-square deviation upper bounds
 
     def parse_vina_file(self, filename):
+        """Scans multi-state model structures from standard Vina text outputs (.pdbqt or .pdb files)."""
         if not os.path.exists(filename): return False
         self.models = []
         self.affinities = []
@@ -328,6 +393,7 @@ class VinaAnalyzer:
         current_model = []
         with open(filename, "r") as f:
             for line in f:
+                # Capture affinity score values and internal geometric metric columns
                 if "REMARK VINA RESULT" in line:
                     try:
                         parts = line.split()
@@ -347,6 +413,7 @@ class VinaAnalyzer:
         return True
 
     def load_into_pymol(self):
+        """Loads and updates isolated Vina models as standalone objects into the active viewer canvas."""
         cmd.delete("vina_all")
         cmd.set("suspend_updates", 1)
         for i, model in enumerate(self.models):
@@ -359,10 +426,10 @@ class VinaAnalyzer:
         cmd.set("suspend_updates", 0)
 
     def export_vina_csv(self, filename):
+        """Computes corresponding Kd and pKd values for Vina affinites and writes data to a CSV spreadsheet."""
         R, T = 0.001987, 298.15
         with open(filename, "w", newline="") as f:
             writer = csv.writer(f)
-            # Modificado el orden de los encabezados del CSV
             writer.writerow(["Mode", "Affinity (kcal/mol)", "Kd (M)", "pKd", "RMSD l.b.", "RMSD u.b."])
             for i, delta_g in enumerate(self.affinities):
                 try:
@@ -375,14 +442,17 @@ class VinaAnalyzer:
                 lb = self.rmsd_lb[i] if i < len(self.rmsd_lb) else 0.0
                 ub = self.rmsd_ub[i] if i < len(self.rmsd_ub) else 0.0
                 
-                # Modificado el orden de escritura en el CSV
                 writer.writerow([i + 1, delta_g, f"{kd:.2e}", f"{pkd:.2f}", lb, ub])
 
 
 class ContactSelectionDialog(QtWidgets.QDialog):
+    """
+    Small helper dialogue prompt enabling the graphical dropdown selection of loaded 
+    workspace nodes to trigger target-ligand interface hydrogen bond scanning.
+    """
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Seleccionar objetos")
+        self.setWindowTitle("Select Objects")
         layout = QtWidgets.QVBoxLayout(self)
         self.receptor_combo = QtWidgets.QComboBox()
         self.ligand_combo = QtWidgets.QComboBox()
@@ -401,6 +471,7 @@ class ContactSelectionDialog(QtWidgets.QDialog):
         layout.addWidget(btn)
 
 
+# Instantiate the analytical singletons
 ada = ADA()
 vina = VinaAnalyzer()
 
@@ -408,7 +479,10 @@ vina = VinaAnalyzer()
 # ================= GUI INTERFACE =================
 
 class GUI(QtWidgets.QWidget):
-
+    """
+    Main PySide/PyQt graphical interface container organizing structural analysis 
+    options into functional tab divisions.
+    """
     def __init__(self):
         super().__init__()
         self.setWindowTitle(f"AutoDockAnalyzer {version}")
@@ -425,7 +499,7 @@ class GUI(QtWidgets.QWidget):
         self.setLayout(main_layout)
 
     def init_autodock_tab(self):
-        """Tab 1: AutoDock4 Layout."""
+        """Initializes components, widgets, buttons, and row structures for the AutoDock4 tab layout."""
         tab = QtWidgets.QWidget()
         layout = QtWidgets.QVBoxLayout()
 
@@ -442,7 +516,7 @@ class GUI(QtWidgets.QWidget):
         export_btn = QtWidgets.QPushButton("Export CSV Report")
         self.table_widget = QtWidgets.QTableWidget()
 
-        # Connections
+        # Connect button signals to their corresponding slot functions
         browse.clicked.connect(self.browse_classic)
         load_btn.clicked.connect(self.load_classic)
         cluster_btn.clicked.connect(self.cluster_classic)
@@ -453,7 +527,7 @@ class GUI(QtWidgets.QWidget):
         export_btn.clicked.connect(self.save_csv_classic)
         self.table_widget.cellClicked.connect(self.handle_classic_click)
 
-        # COMPONENT LAYOUT
+        # Assemble UI component vertical hierarchies
         layout.addWidget(self.file)
         layout.addWidget(browse)
         layout.addWidget(load_btn)          
@@ -464,6 +538,7 @@ class GUI(QtWidgets.QWidget):
         layout.addWidget(medoid_btn)
         layout.addWidget(hbonds_btn)
         
+        # Safe toggle switch disabling plotting features if dependencies are absent
         if not HAS_MATPLOTLIB:
             plot_btn.setEnabled(False)
             plot_btn.setToolTip("Plotting requires the 'matplotlib' library to be installed in Python.")
@@ -476,7 +551,7 @@ class GUI(QtWidgets.QWidget):
         self.tabs.addTab(tab, "AutoDock")
 
     def init_vina_tab(self):
-        """Tab 2: AutoDock Vina Layout."""
+        """Initializes components, widgets, and row structures for the AutoDock Vina tab layout."""
         tab = QtWidgets.QWidget()
         layout = QtWidgets.QVBoxLayout()
 
@@ -504,7 +579,7 @@ class GUI(QtWidgets.QWidget):
         self.tabs.addTab(tab, "AutoDock Vina")
 
     def init_acknowledgements_tab(self):
-        """Tab 3: About, Affiliation & License."""
+        """Renders developer metadata, laboratory affiliations, institutional logos, and software license states."""
         tab = QtWidgets.QWidget()
         layout = QtWidgets.QVBoxLayout()
 
@@ -540,6 +615,7 @@ class GUI(QtWidgets.QWidget):
         self.tabs.addTab(tab, "About")
 
     def run_hbonds_dialog(self):
+        """Launches the dialogue box interface to calculate hydrogen bonding paths between active molecular selections."""
         dialog = ContactSelectionDialog(self)
         if dialog.exec_():
             rec = dialog.receptor_combo.currentText()
@@ -548,16 +624,22 @@ class GUI(QtWidgets.QWidget):
 
     # ---------- CLASSIC SLOTS ----------
     def browse_classic(self):
+        """Triggers system file explorers to query for native AutoDock4 .dlg log inputs."""
         f, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select AutoDock File", "", "DLG files (*.dlg *.DLG)")
         if f: self.file.setText(f)
 
     def load_classic(self):
+        """Processes chosen .dlg files and transfers coordinate rows into the interactive visual environment."""
         if self.file.text() and ada.load_dlg(self.file.text()):
             ada.load_into_pymol()
 
     def cluster_classic(self):
+        """
+        Executes structural cluster sorting routines and translates analytical matrices 
+        into display rows within the interactive PyQt table widget interface.
+        """
         if not ada.poses: return
-        self.table_widget.setSortingEnabled(False)
+        self.table_widget.setSortingEnabled(False) # Prevents UI sorting calculation loops during item entry
         ada.cluster(float(self.cutoff.text()))
         table_data = ada.table()
 
@@ -588,9 +670,13 @@ class GUI(QtWidgets.QWidget):
                 self.table_widget.setItem(i, 6, NumericTableWidgetItem(""))
 
         self.table_widget.resizeColumnsToContents()
-        self.table_widget.setSortingEnabled(True)
+        self.table_widget.setSortingEnabled(True) # Re-enable sorting once loading completes
 
     def handle_classic_click(self, row, column):
+        """
+        Dynamically handles row selection events inside the cluster table grid. Hides alternate 
+        conformations and highlights the corresponding cluster family inside PyMOL in real-time.
+        """
         if not ada.clusters: return
         cluster_id = self.table_widget.item(row, 0).text()
         cutoff_str = str(ada.current_cutoff).replace('.', '_')
@@ -609,10 +695,12 @@ class GUI(QtWidgets.QWidget):
 
     # ---------- VINA SLOTS ----------
     def browse_vina(self):
+        """Triggers system file explorers to query for native AutoDock Vina .pdbqt or .pdb files."""
         f, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select Vina File", "", "Vina Outputs (*.pdbqt *.pdb)")
         if f: self.vina_file_line.setText(f)
 
     def load_vina_workflow(self):
+        """Parses chosen Vina output configurations, structural modes, and REMARK data metrics into the table view."""
         if not self.vina_file_line.text(): return
         if not vina.parse_vina_file(self.vina_file_line.text()): return
         vina.load_into_pymol()
@@ -650,6 +738,10 @@ class GUI(QtWidgets.QWidget):
         self.vina_table.setSortingEnabled(True)
 
     def handle_vina_click(self, row, column):
+        """
+        Dynamically handles row selection events inside the Vina table grid. Hides alternate 
+        conformations and highlights the corresponding structural mode inside PyMOL in real-time.
+        """
         if not vina.models: return
         mode_id = self.vina_table.item(row, 0).text()
         cmd.hide("everything", "vina_mode_*")
@@ -666,13 +758,16 @@ class GUI(QtWidgets.QWidget):
 dialog = None
 
 def run_plugin():
+    """Instantiates and launches the PyQt GUI panel workspace window wrapper."""
     global dialog
     dialog = GUI()
     dialog.show()
 
 def __init_plugin__(app=None):
+    """Hooks and registers the ADA plugin entry point into the native PyMOL dropdown toolbar menu layout."""
     from pymol.plugins import addmenuitemqt
     addmenuitemqt("ADA", run_plugin)
 
+# Extends functionality allowing command-line terminal execution calls inside PyMOL
 cmd.extend("AutoDockAnalyzer", run_plugin)
 print(f"✅ AutoDockAnalyzer v{version} LOADED")
