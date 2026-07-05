@@ -61,7 +61,7 @@ PERSONAL_LOGO_BASE64 = b"""iVBORw0KGgoAAAANSUhEUgAAAKUAAAClCAYAAAA9Kz3aAAAAAXNSR
 
 
 ###############
-#Contacts v1.3#
+#H-Bonds v1.3 #
 ###############
 
 def calculate_hydrogen_bonds(selection1, selection2):
