@@ -397,7 +397,7 @@ class VinaAnalyzer:
         self.rmsd_ub = []  # Root-mean-square deviation upper bounds
 
     def parse_vina_file(self, filename):
-        """Scans multi-state model structures from standard Vina text outputs (.pdbqt or .pdb files)."""
+        """Scans multi-state model structures from standard Vina text outputs (.pdbqt file)."""
         if not os.path.exists(filename): return False
         self.models = []
         self.affinities = []
