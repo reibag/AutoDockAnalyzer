@@ -21,9 +21,9 @@ FEATURES:
       thermodynamic profiling, and native Vina CSV reporting.
     - Tab 3 (About): Institutional credits and non-commercial licensing information.
 VERSION HISTORY:
-    v1.3 (2026-07-02):
+    v1.3 (2026-06-29):
         - Added H-Bonds button
-    v1.2 (2026-06-10):
+    v1.2 (2026-06-08):
         - Corrected critical bugs 
     v0.1 (2026-05-01):
         - Added intracluster Energy SD 
