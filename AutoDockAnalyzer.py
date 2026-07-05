@@ -71,7 +71,7 @@ def calculate_hydrogen_bonds(selection1, selection2):
     cmd.distance(result_name, all_don_acc1, all_don_acc2, 3.6, mode=2)
     cmd.set("dash_radius", "0.1", result_name)
     cmd.set("dash_color", "yellow", result_name)
-    print(f"[ADA] Enlaces de hidrógeno calculados entre {selection1} y {selection2}")
+    print(f"[ADA] H-Bonds found tetween {selection1} y {selection2}")
 
 class NumericTableWidgetItem(QtWidgets.QTableWidgetItem):
     """Custom table widget item that allows proper numerical sorting."""
