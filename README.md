@@ -13,14 +13,14 @@ AutoDockAnalyzer is a light and portable plugin for PyMOL designed to analyze do
 - Extraction of:
   - Best pose
   - Medoid (representative structure)
-- Thermodynamic calculations:
-  - Binding free energy (ΔG)
+- Thermodynamic calculations from ΔG scoring:
   - Dissociation constant (Kd)
   - pKd (−log10 Kd)
 - Cluster population visualization (bar plot)
 - Table sorting (like Excel)
 - Highlight selected cluster interactively
 - AutoDock Vina poses visualization
+- Hydrogen bond detection
 
 ## 📊 Output
 
