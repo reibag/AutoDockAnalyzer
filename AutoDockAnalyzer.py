@@ -311,53 +311,80 @@ class ADA:
 
     def plot(self):
         """
-        Asynchronously generates high-resolution bar charts plotting cluster populations with energy standard 
-        deviations acting as vertical error bars. Automatically falls back if matplotlib is missing.
+        Asynchronously generates high-resolution side-by-side analytical charts:
+        1. Cluster Population bar chart without error bars.
+        2. Mean Energy profile bar chart using the computed intracluster SD as vertical error bars.
         """
         table = self.table()
         if not table: 
             return
         
+        # Safe checkpoint checking our global environment validation
         if not HAS_MATPLOTLIB:
             print("[ADA] Error: Matplotlib is not installed. Plotting functionality is disabled.")
             return
 
-        import matplotlib
-        matplotlib.use('Agg', force=True) # Forces a headless background script renderer, avoiding canvas freezes
+        # Safe lazy loading setup utilizing the already checked core module
+        matplotlib.use('Agg', force=True) # Forces headless background renderer to avoid UI canvas freezing
         import matplotlib.pyplot as plt
         
+        # Data Curation from the current thermodynamic table
         cluster_ids = [row[0] for row in table]
         populations = [row[1] for row in table]
+        mean_energies = [row[5] if (row[5] is not None) else 0.0 for row in table]
         energy_sds = [row[6] if (row[6] is not None) else 0.0 for row in table]
         
-        fig, ax = plt.subplots(figsize=(8, 5))
-        color_bars = '#3498db'    
-        color_errors = '#e74c3c'  
+        # Instantiate side-by-side subplots layout (1 row, 2 columns)
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5.5))
         
-        ax.bar(cluster_ids, populations, 
-               color=color_bars, 
-               alpha=0.7, 
-               edgecolor='#2980b9',
-               yerr=energy_sds, 
-               error_kw={
-                   'ecolor': color_errors, 
-                   'elinewidth': 2, 
-                   'capsize': 6, 
-                   'capthick': 2
-               },
-               label='Population')
+        color_pop = '#3498db'     # Consistent blue for populations
+        color_energy = '#2ecc71'  # Green for thermodynamic profiles
+        color_errors = '#e74c3c'  # Red validation line for SD limits
         
-        ax.set_xlabel("Cluster ID", fontweight='bold', labelpad=10)
-        ax.set_ylabel("Cluster Population (# poses)", fontweight='bold', labelpad=10)
-        ax.set_xticks(cluster_ids)  
-        ax.set_title("Cluster Population with Energy SD as Error Bars", fontsize=12, fontweight='bold', pad=15)
+        # ----------------------------------------------------------------------
+        # PLOT 1: Cluster Population (Pure Size Distribution)
+        # ----------------------------------------------------------------------
+        ax1.bar(cluster_ids, populations, 
+                color=color_pop, 
+                alpha=0.75, 
+                edgecolor='#2980b9',
+                linewidth=1.2)
         
+        ax1.set_xlabel("Cluster ID", fontweight='bold', labelpad=8, fontsize=13)
+        ax1.set_ylabel("Cluster Population (# poses)", fontweight='bold', labelpad=8, fontsize=13)
+        ax1.set_xticks(cluster_ids)
+        ax1.grid(axis='y', linestyle='--', alpha=0.5)
+        
+        # ----------------------------------------------------------------------
+        # PLOT 2: Mean Binding Energy Profile with Intracluster SD
+        # ----------------------------------------------------------------------
+        ax2.bar(cluster_ids, mean_energies, 
+                color=color_energy, 
+                alpha=0.75, 
+                edgecolor='#27ae60',
+                linewidth=1.2,
+                yerr=energy_sds, 
+                error_kw={
+                    'ecolor': color_errors, 
+                    'elinewidth': 2, 
+                    'capsize': 6, 
+                    'capthick': 2
+                })
+        
+        ax2.set_xlabel("Cluster ID", fontweight='bold', labelpad=8, fontsize=13)
+        ax2.set_ylabel("Mean ΔG (kcal/mol)", fontweight='bold', labelpad=8, fontsize=13)
+        ax2.set_xticks(cluster_ids)
+        ax2.grid(axis='y', linestyle='--', alpha=0.5)
+        
+        # Global Chart Adjustments
         fig.tight_layout()
+        
+        # Non-blocking async file rendering pipeline
         output_path = os.path.join(os.path.expanduser("~"), "ADA_cluster_plot.png")
         fig.savefig(output_path, dpi=150)
         plt.close(fig)  
         
-        # Dispatch image rendering tasks to native operating system background processes
+        # Dispatch file execution hooks to native OS subprocesses
         import platform
         import subprocess
         if platform.system() == "Windows":
