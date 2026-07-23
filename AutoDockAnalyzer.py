@@ -75,7 +75,7 @@ def calculate_hydrogen_bonds(selection1, selection2):
     all_don_acc2 = f"{selection2} and (donor or acceptor)"
     
     # Render dashed distance lines between selections using a threshold of 3.6 Angstroms
-    cmd.distance(result_name, all_don_acc1, all_don_acc2, 3.6, mode=2)
+    cmd.distance(result_name, all_don_acc1, all_don_acc2, 3.5, mode=2)
     cmd.set("dash_radius", "0.1", result_name)
     cmd.set("dash_color", "yellow", result_name)
     print(f"[ADA] H-Bonds found between {selection1} and {selection2}")
@@ -110,7 +110,7 @@ class NumericTableWidgetItem(QtWidgets.QTableWidgetItem):
 
 class ADA:
     """
-    Core engine controller that handles data ingestion, text parsing, RMSD-based 
+    Core engine controller that handles data loading, text parsing, RMSD-based 
     greedy clustering, and thermodynamic property curation for AutoDock4 (.dlg) files.
     """
     def __init__(self):
@@ -155,7 +155,7 @@ class ADA:
                     except Exception:
                         energy = None
 
-                # Isolate multi-state atom models bounded by model initialization markers
+                # Isolate multi-state atom models bounded by model initialization markers inside dlg
                 if line.startswith("DOCKED: MODEL"):
                     pose = []
                     reading = True
