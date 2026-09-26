@@ -21,7 +21,7 @@ FEATURES:
       thermodynamic profiling, and native Vina CSV reporting.
     - Tab 3 (About): Institutional credits and non-commercial licensing information.
 VERSION HISTORY:
-    v1.3.1 (2026-09-26):
+    v1.5.1 (2026-09-26):
         -Minor bugs fixed
     v1.5 (2026-07-30):
         - Updated Plot module to generate AutoDockTools (ADT) style histogram (X: Energy, Y: Population).
