@@ -69,7 +69,7 @@ Accordingly, calculated nominal binding affinity estimations ($K_d\text{ (app.)}
 1. **Download the repository:**
    - Download the latest release or click **`Code` → `Download ZIP`** on GitHub and **extract (unzip) the folder** on your computer (or clone via `git clone https://github.com/reibag/AutoDockAnalyzer.git`).
 2. **Install in PyMOL:**
-   - Open PyMOL (version 2.x or 3.x).
+   - Open PyMOL (version 3.x).
    - Navigate to **`Plugin` → `Plugin Manager`** in the top menu bar.
    - Switch to the **`Install New Plugin`** tab.
    - Under *Install from local file*, click **`Choose file...`**.
