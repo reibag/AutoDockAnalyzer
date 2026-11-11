@@ -4,7 +4,7 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23374149.svg)](https://doi.org/10.5281/zenodo.23374149)
 
-**AutoDockAnalyzer (ADA) v1.6** is an open-source, lightweight, single-file Python 3 plugin natively integrated into PyMOL (supporting both PyMOL 2.x and 3.x) for post-docking conformational analysis, clustering, and empirical score-derived affinity evaluation of AutoDock 4 (`.dlg`) and AutoDock Vina (`.pdbqt`) simulation outputs.
+**AutoDockAnalyzer (ADA) v1.6** is an open-source, lightweight, single-file Python 3 plugin natively integrated into PyMOL for post-docking conformational analysis, clustering, and empirical score-derived affinity evaluation of AutoDock 4 (`.dlg`) and AutoDock Vina (`.pdbqt`) simulation outputs.
 
 ---
 
