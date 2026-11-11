@@ -1,0 +1,6 @@
+# AutoDockAnalyzer (ADA) - Results Export
+# NOTE: Docking scores and apparent Kd/pKd values (298.15 K) are nominal empirical estimations, not experimental thermodynamic free energies (Delta G) or equilibrium constants (Kd/Ki).
+# ------------------------------------------------------------------------------------------------------------------------
+Cluster,Size,Best Energy (kcal/mol),Kd (app.) [M],pKd (app.),Mean Energy (kcal/mol),Energy SD
+1,193,-8.97,2.66e-07,6.58,-8.52,0.18
+2,7,-8.47,6.18e-07,6.21,-8.29,0.10
