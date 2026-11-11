@@ -21,7 +21,6 @@ ADA parses raw docking outputs directly inside PyMOL without requiring external 
 - **Dual Clustering Support for AutoDock 4 (`.dlg`):**
   - **AutoDock-type (`Read .dlg Table`, Default):** Directly parses the precomputed `RMSD TABLE` (`RANKING` records) and `CLUSTERING HISTOGRAM` from `.dlg` logs upon loading, faithfully preserving AutoDock 4's native type-matched, symmetry-aware clustering (accounting for equivalent chemical groups such as carboxylates, ammonium hydrogens, and symmetrical alkyl chains).
   - **AutoDockTools-type (`Index-Matched RMSD`):** Allows interactive greedy re-clustering on the fly at any custom RMSD cutoff (e.g., `2.0 Å`, `1.5 Å`) using strict 1-to-1 atom-index Cartesian RMSD (`rmsnosym`), reproducing the interactive clustering behavior of legacy AutoDockTools (ADT).
-- **Sub-Second Performance & Scaling:** Vectorized NumPy calculations delivering sub-second execution times ($<0.25\text{ s}$ for 200 conformations) with empirical $\mathcal{O}(N^2)$ scaling.
 - **Conformational Representatives:**
   - **Best Pose:** Instantly extracts the lowest-energy conformer for each cluster.
   - **Medoid Extraction (Centroid):** Identifies the true geometric medoid minimizing average pairwise RMSD across all cluster members.
