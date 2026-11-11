@@ -26,7 +26,7 @@ ADA parses raw docking outputs directly inside PyMOL without requiring external 
   - **Medoid Extraction (Centroid):** Identifies the true geometric medoid minimizing average pairwise RMSD across all cluster members.
 - **Interactive Visual Navigation:** Selecting any cluster or pose in the sortable data table automatically renders and centers that conformational family in the 3D PyMOL viewport.
 - **Hydrogen Bonding & Binding-Site Pocket Profiling:**
-  - **Find H-Bonds:** Dynamic polar contact detection between receptor and ligand using PyMOL's native `cmd.distance(..., mode=2)` geometry (default distance cutoff $\le 3.5\text{ \AA}$ combined with donor/acceptor angle constraints).
+  - **Find H-Bonds:** Dynamic polar contact detection between receptor and ligand using PyMOL's native `cmd.distance(..., mode=2)` geometry (default distance cutoff 3.5 Å combined with donor/acceptor angle constraints).
   - **Show Pocket Residues (3 Å):** One-click selection and `sticks` rendering of all complete receptor residues located within a customizable distance cutoff (default `3.0 Å`) of the ligand (`byres ((receptor) within cutoff of (ligand))`) to inspect side-chain orientations and non-covalent interactions.
 - **Nominal Binding Affinity Estimations (apparent Kd / pKd at 298.15 K):** Computes empirical score-derived affinity estimations ($K_d\text{ (app.)}$ and $\text{p}K_d\text{ (app.)}$ at 298.15 K) to facilitate relative ranking across conformational clusters and binding modes.
 - **AutoDock Vina Compatibility:** Parses multi-model `.pdbqt` files from AutoDock Vina, ranking poses, extracting RMSD l.b./u.b. metrics, and linking table entries directly to 3D states.
