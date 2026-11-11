@@ -1,0 +1,13 @@
+receptor = 2HU4_apo.pdbqt
+ligand = oseltamivirS_H.pdbqt
+
+center_x = -0.092
+center_y = 81.795
+center_z = 109.421
+
+size_x = 9.75
+size_y = 9.75
+size_z = 9.75
+
+out = oseltamivirS_H_vina_out.pdbqt
+log = oseltamivirS_H_vina.log
